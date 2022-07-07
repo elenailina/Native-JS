@@ -48,14 +48,14 @@ window.addEventListener('DOMContentLoaded', function() {
         const t = Date.parse(endtime) - Date.parse(new Date());
 
         if (t <= 0){
-            days = 0,
-            hours = 0,
-            minutes = 0,
+            days = 0;
+            hours = 0;
+            minutes = 0;
             seconds = 0;
         } else {
-            days = Math.floor(t / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((t / (1000 * 60 * 60)) % 24),
-            minutes = Math.floor((t / (1000 * 60)) % 60),
+            days = Math.floor(t / (1000 * 60 * 60 * 24));
+            hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+            minutes = Math.floor((t / (1000 * 60)) % 60);
             seconds = Math.floor((t / 1000) % 60);
         }
 
@@ -100,4 +100,52 @@ window.addEventListener('DOMContentLoaded', function() {
     }
 
     setClock('.timer', deadline);
+
+    //Modal
+
+    const modalTrigger = document.querySelectorAll('[data-modal]'),
+          modal = document.querySelector('.modal'),
+          modalClose = document.querySelector('[data-close]');
+
+    function openModal(){
+        modal.classList.add('show');
+        modal.classList.remove('hide');
+        document.body.style.overflow = 'hidden';
+        clearInterval(modalTimerId);
+    }
+
+    function closeModal(){
+        modal.classList.remove('show');
+        modal.classList.add('hide');
+        document.body.style.overflow = '';
+    }
+    
+    modalTrigger.forEach(btn => {
+        btn.addEventListener('click', openModal);
+    });
+
+    modalClose.addEventListener('click', closeModal);
+    
+    modal.addEventListener('click', (e) => {
+        if(e.target === modal){
+            closeModal();
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if(e.code === "Escape" && modal.classList.contains('show')){
+            closeModal();
+        }
+    });
+
+    const modalTimerId = setTimeout(openModal, 15000);
+
+    function openModalByScroll() {
+        if(window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            openModal();
+            window.removeEventListener('scroll', openModalByScroll);
+        }
+    }
+
+    window.addEventListener('scroll', openModalByScroll);
 });

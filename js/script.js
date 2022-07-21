@@ -244,21 +244,22 @@ window.addEventListener('DOMContentLoaded', function() {
             `;
             form.insertAdjacentElement('afterend', statusMessage);
 
-            const request = new XMLHttpRequest();
-
-            request.open('POST', 'server.php');
             const formData = new FormData(form);
-            request.send(formData);
 
-            request.addEventListener('load', () => {
-                if(request.status === 200){
-                    showThanksModal(message.success); 
-                    form.reset();
-                    statusMessage.remove();
-                } else {
-                    showThanksModal(message.failure);
-                }
+            fetch('server.php', {
+                method: "POST",
+                body: formData
+            }).then(data => data.text())
+            .then(data => {
+                console.log(data);
+                showThanksModal(message.success); 
+                statusMessage.remove();
+            }).catch(() => {
+                showThanksModal(message.failure);
+            }).finally(() => {
+                form.reset();
             });
+
         });
     }
 
